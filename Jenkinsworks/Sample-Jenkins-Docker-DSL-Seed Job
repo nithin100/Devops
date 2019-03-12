@@ -1,0 +1,12 @@
+job('DSL-Seed-Job') {
+    scm {
+        git('https://github.com/klbigfoot/springboot-hello-world')
+    }
+    steps {
+        cp dockerfile springboot-hello-world
+        cd springboot-hello-world
+        maven('-e clean test')
+        docker build -t greetingimage . 
+        docker run -itd -p 80:8080 greetingimage
+    }
+}
