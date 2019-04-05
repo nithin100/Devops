@@ -1,0 +1,41 @@
+version: '2'
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    image: db
+    ports:
+      - "3306:3306"
+    volumes:
+      - demo_volume:/var/lib/mysql
+    networks:
+      - my-backend
+
+  web:
+    build:
+      context: ./target
+      dockerfile: Dockerfile
+    image: web
+    depends_on:
+      - db
+    ports:
+      - "18080:8080"
+    networks:
+      - my-backend
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=Student
+      - DATABASE_PASSWORD=Student
+      - DATABASE_NAME=authorizepro
+      - DATABASE_PORT=3306
+      - SPRING_PROFILES_ACTIVE=container
+      - DEBUG=true
+
+volumes:
+  demo_volume:
+    driver: local
+
+networks:
+  my-backend:
+    driver: bridge
